@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YūmaAPI Documentation</title>
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/QdcH79B1/yumaapi.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@600;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        :root {
+            --bg-color: #1A1A40;
+            --sidebar-bg: #2D2D2D;
+            --content-bg: #1A1A40;
+            --text-color: #F5F5F5;
+            --text-muted: #B0B0D0;
+            --link-color: #9B5DE5;
+            --link-hover: #F15BB5;
+            --border-color: #4A4A6A;
+            --header-color: #00F5D4;
+            --code-bg: #2D2D2D;
+            --method-get-bg: #9B5DE5;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            text-align: center;
+        }
+        .logo {
+            margin-bottom: 10px;
+        }
+        .sidebar h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            margin: 0 0 15px 0;
+            color: var(--header-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+        }
+        .sidebar li { margin: 2px 0; }
+        .sidebar a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            padding: 8px 12px;
+            display: block;
+            border-radius: 6px;
+            transition: color 0.2s, background-color 0.2s;
+        }
+        .sidebar a:hover {
+            color: var(--text-color);
+            background-color: rgba(155, 93, 229, 0.2);
+        }
+        .sidebar a.active {
+            color: var(--link-color);
+            font-weight: 600;
+            background-color: rgba(155, 93, 229, 0.1);
+        }
+        .main-content {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .content-panel {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            height: 100vh;
+        }
+        .endpoint h2, .endpoint h3, .example-panel h3 {
+             font-family: 'Orbitron', sans-serif;
+        }
+        .endpoint h2 {
+            font-size: 2rem;
+            color: var(--header-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+        .endpoint h3 { font-size: 1.2rem; margin-bottom: 20px; color: var(--header-color); font-weight: 600; }
+        .endpoint p { margin-bottom: 15px; color: var(--text-muted); font-size: 0.95rem; }
+        .endpoint ul { padding-left: 20px; color: var(--text-muted); }
+        .endpoint li { margin-bottom: 8px; }
+        .endpoint code, .request-box p, .response-box pre code {
+            font-family: 'Fira Code', Menlo, Monaco, Consolas, "Courier New", monospace;
+        }
+        .endpoint code {
+            background-color: var(--code-bg);
+            padding: 3px 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+        .method {
+            display: inline-block;
+            padding: 4px 10px;
+            background-color: var(--method-get-bg);
+            color: white;
+            font-weight: bold;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin-right: 12px;
+            vertical-align: middle;
+        }
+        .param { color: #00F5D4; font-weight: 500; }
+        .query-param { color: #F15BB5; font-weight: 500; }
+
+        .example-panel {
+            flex-basis: 50%;
+            background-color: var(--sidebar-bg);
+            padding: 30px;
+            overflow-y: auto;
+            border-left: 1px solid var(--border-color);
+            height: 100vh;
+        }
+        .example-panel h3 { font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 0 0 15px 0;}
+        .request-box {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .request-box p { margin: 0; word-break: break-all; }
+        
+        .send-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: var(--link-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .send-button:hover { background-color: var(--link-hover); }
+
+        .response-box {
+            height: calc(100vh - 250px);
+            max-height: 600px;
+        }
+        .response-box pre {
+            margin: 0;
+            height: 100%;
+            overflow: auto;
+        }
+        .response-box code { font-size: 0.85rem; }
+
+        @media (max-width: 1024px) {
+            .main-content { flex-direction: column; }
+            .example-panel {
+                flex-basis: auto;
+                height: 50vh;
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+            }
+        }
+         @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+                z-index: 1000;
+                height: 100%;
+            }
+            .sidebar.show { transform: translateX(0); }
+            .menu-toggle {
+                display: block; position: fixed; top: 15px; left: 15px; z-index: 1001;
+                background: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 5px;
+                width: 40px; height: 40px; cursor: pointer;
+            }
+            .menu-toggle span { display: block; width: 20px; height: 2px; background-color: var(--text-color); margin: 4px auto; transition: all 0.3s; }
+            .menu-toggle.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+            .menu-toggle.open span:nth-child(2) { opacity: 0; }
+            .menu-toggle.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-toggle" id="menu-toggle"><span></span><span></span><span></span></div>
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <img src="https://i.postimg.cc/QdcH79B1/yumaapi.png" alt="YūmaAPI Logo" class="logo" style="width: 130px !important; height: auto !important;">
+            <ul>
+                <li><a href="#introduction" class="nav-link active">Introduction</a></li>
+                <li><a href="#search" class="nav-link">Search</a></li>
+                <li><a href="#info" class="nav-link">Anime Info</a></li>
+                <li><a href="#watch" class="nav-link">Episode Sources</a></li>
+                <li><a href="#recent-episodes" class="nav-link">Recent Episodes</a></li>
+                <li><a href="#top-airing" class="nav-link">Top Airing</a></li>
+                <li><a href="#genres" class="nav-link">Genres</a></li>
+                <li><a href="#studio" class="nav-link">Studio</a></li>
+                <li><a href="#schedule" class="nav-link">Schedule</a></li>
+                <li><a href="#spotlight" class="nav-link">Spotlight</a></li>
+                <li><a href="#suggestions" class="nav-link">Search Suggestions</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="content-panel" id="content-panel">
+            </div>
+            <div class="example-panel" id="example-panel">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+    <script>
+        const endpoints = {
+            introduction: {
+                title: "Introduction",
+                description: `
+                    <p>Welcome to the YūmaAPI documentation. This API allows you to access a vast library of anime information and streaming sources by scraping HiAnime.to in real-time.</p>
+                    <h3>Core Workflow</h3>
+                    <p>A typical workflow for your application would be:</p>
+                    <ol>
+                        <li>Use <strong>/search</strong> or a discovery endpoint like <strong>/top-airing</strong> to find an anime and get its <code>id</code>.</li>
+                        <li>Use that <code>id</code> with the <strong>/info</strong> endpoint to get detailed information and a list of all episodes, each with its own unique <code>episodeId</code>.</li>
+                        <li>Use an <code>episodeId</code> with the <strong>/watch</strong> endpoint to retrieve the video source URLs for streaming.</li>
+                    </ol>
+                    <p>Click an endpoint in the sidebar to view its details and send live test requests.</p>
+                `,
+                requestUrl: null
+            },
+            search: {
+                title: "Search for Anime",
+                description: `
+                    <p>Searches for anime by a given query. The response is a paginated list of results.</p>
+                    <h3>URL Structure</h3>
+                    <code>/search/<span class="param">{query}</span>?page=<span class="query-param">{page}</span></code>
+                    <h3>Parameters</h3>
+                    <ul>
+                        <li><code><span class="param">{query}</span></code>: The search term (e.g., 'dragon ball').</li>
+                        <li><code><span class="query-param">{page}</span></code> (optional): The page number to fetch. Defaults to 1.</li>
+                        <li><code><span class="query-param">{max_results}</span></code> (optional): Limits the number of results returned on the current page.</li>
+                    </ul>
+                `,
+                requestUrl: "/search/dragon%20ball"
+            },
+            info: {
+                title: "Get Anime Info",
+                description: `
+                    <p>Retrieves all available metadata for a single anime series, including a full list of its episodes.</p>
+                    <h3>URL Structure</h3>
+                    <code>/info/<span class="param">{anime_id}</span></code>
+                    <h3>Parameters</h3>
+                    <ul><li><code><span class="param">{anime_id}</span></code>: The unique ID of the anime, obtained from a search or discovery endpoint.</li></ul>
+                    <h3>Important</h3>
+                    <p>The <code>episodes</code> array in the response contains the <code>id</code> for each episode (e.g., <code>'dragon-ball-509$episode$10218'</code>). You will need this ID for the <strong>/watch</strong> endpoint.</p>
+                `,
+                requestUrl: '/info/dragon-ball-509'
+            },
+            watch: {
+                title: "Get Episode Sources",
+                description: `
+                    <p>Fetches video source URLs, subtitles, and thumbnail previews for a specific episode.</p>
+                    <h3>URL Structure</h3>
+                    <code>/watch?episodeId=<span class="query-param">{episode_id}</span>&type=<span class="query-param">{sub|dub}</span></code>
+                    <h3>Parameters</h3>
+                    <ul>
+                        <li><code><span class="query-param">{episode_id}</span></code> (required): The unique ID of the episode, obtained from the <strong>/info</strong> endpoint.</li>
+                        <li><code><span class="query-param">{type}</span></code> (optional): Audio type, either <code>sub</code> or <code>dub</code>. Defaults to <code>sub</code>.</li>
+                         <li><code><span class="query-param">{server}</span></code> (optional): Streaming server. Supports <code>vidcloud</code> (default) and <code>megacloud</code>.</li>
+                    </ul>
+                    <p>The response contains a <code>sources</code> array with M3U8 URLs and a <code>previews</code> array with a VTT file for thumbnails.</p>
+                `,
+                requestUrl: '/watch?episodeId=dragon-ball-509$episode$10218&type=dub'
+            },
+            'recent-episodes': {
+                title: 'Recent Episodes',
+                description: `<p>Fetches a paginated list of recently updated episodes. Follows the standard search response structure.</p><h3>URL Structure</h3><code>/recent-episodes?page=<span class="query-param">{page}</span></code>`,
+                requestUrl: '/recent-episodes'
+            },
+            'top-airing': {
+                title: 'Top Airing Anime',
+                description: `<p>Gets the current top airing anime. Follows the standard search response structure.</p><h3>URL Structure</h3><code>/top-airing</code>`,
+                requestUrl: '/top-airing',
+            },
+            genres: {
+                title: "Genres",
+                description: `
+                    <p>Fetches a list of all available genres or anime within a specific genre.</p>
+                    <h3>URL Structure</h3>
+                    <ul>
+                        <li><strong>List All Genres:</strong> <code>/genre/list</code> (Returns a simple array of strings).</li>
+                        <li><strong>Search by Genre:</strong> <code>/genre/<span class="param">{genre_name}</span></code> (Returns a standard paginated search result).</li>
+                    </ul>
+                `,
+                requestUrl: '/genre/action'
+            },
+            studio: {
+                title: 'Studio',
+                description: `<p>Fetches anime produced by a specific studio. Returns a standard paginated search result.</p><h3>URL Structure</h3><code>/studio/<span class="param">{studio_id}</span></code>`,
+                requestUrl: '/studio/toei-animation'
+            },
+            schedule: {
+                title: 'Airing Schedule',
+                description: `<p>Retrieves the airing schedule for a given date. Note: This endpoint is slower as it makes additional requests to fetch images for each result.</p><h3>URL Structure</h3><code>/schedule/<span class="param">{YYYY-MM-DD}</span></code>`,
+                requestUrl: `/schedule/${new Date().toISOString().slice(0, 10)}`
+            },
+            spotlight: {
+                title: 'Spotlight Anime',
+                description: `<p>Fetches the list of featured spotlight anime from the homepage. Returns a simple list of results.</p><h3>URL Structure</h3><code>/spotlight</code>`,
+                requestUrl: '/spotlight'
+            },
+            suggestions: {
+                title: 'Search Suggestions',
+                description: `<p>Retrieves quick search suggestions for a query. Returns a simple list of results.</p><h3>URL Structure</h3><code>/search-suggestions/<span class="param">{query}</span></code>`,
+                requestUrl: '/search-suggestions/dragon'
+            }
+        };
+
+        const contentPanel = document.getElementById('content-panel');
+        const examplePanel = document.getElementById('example-panel');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        function renderEndpoint(id) {
+            const endpoint = endpoints[id];
+            if (!endpoint) return;
+
+            let contentHTML = `<div class="endpoint" id="${id}"><h2>${endpoint.title}</h2>${endpoint.description}</div>`;
+            contentPanel.innerHTML = contentHTML;
+
+            if (endpoint.requestUrl) {
+                let exampleHTML = `
+                    <h3>Example Request</h3>
+                    <div class="request-box">
+                        <p><span class="method">GET</span> ${endpoint.requestUrl}</p>
+                    </div>
+                    <button class="send-button" data-url="${endpoint.requestUrl}">Send Request</button>
+                    <h3>Response</h3>
+                    <div class="response-box">
+                        <pre><code class="language-json" id="response-code">{
+    "message": "Click 'Send Request' to see the response."
+}</code></pre>
+                    </div>`;
+                examplePanel.innerHTML = exampleHTML;
+                document.querySelector('.send-button').addEventListener('click', sendRequest);
+            } else {
+                examplePanel.innerHTML = '<h3>API Overview</h3><p>Select an endpoint from the left to get started.</p>';
+            }
+            Prism.highlightAll();
+        }
+
+        async function sendRequest(event) {
+            const button = event.target;
+            const url = button.dataset.url;
+            const responseCodeEl = document.getElementById('response-code');
+            
+            button.textContent = 'Loading...';
+            button.disabled = true;
+            responseCodeEl.textContent = 'Fetching data from the API...';
+            Prism.highlightElement(responseCodeEl);
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                responseCodeEl.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                responseCodeEl.textContent = JSON.stringify({ error: 'Failed to fetch', message: error.toString() }, null, 2);
+            } finally {
+                button.textContent = 'Send Request';
+                button.disabled = false;
+                Prism.highlightElement(responseCodeEl);
+            }
+        }
+        
+        function handleNavClick(event) {
+            event.preventDefault();
+            const targetId = event.target.hash.substring(1);
+            
+            navLinks.forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+
+            renderEndpoint(targetId);
+
+            if(window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('show');
+                document.getElementById('menu-toggle').classList.remove('open');
+            }
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', handleNavClick);
+        });
+        
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+        menuToggle.addEventListener('click', () => {
+             sidebar.classList.toggle('show');
+             menuToggle.classList.toggle('open');
+        });
+
+        const initialId = window.location.hash ? window.location.hash.substring(1) : 'introduction';
+        renderEndpoint(initialId);
+        navLinks.forEach(link => {
+            if (link.hash.substring(1) === initialId) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+
+    </script>
+</body>
+</html>
