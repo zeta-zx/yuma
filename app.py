@@ -1158,20 +1158,38 @@ def get_anilist_trailer(anime_id: int):
 
 @app.route('/trailer')
 def trailer():
-    anime_id = request.args.get('id', type=int)
+    anime_id = request.args.get('id', type=str)
 
     if not anime_id:
         return jsonify({
-            'error': "Please provide a valid numeric 'id' as a query parameter."
+            'error': "Please provide a valid 'id' as a query parameter."
         }), 400
 
-    result = get_anilist_trailer(anime_id)
+    result = None
+    if anime_id.isdigit():
+        result = get_anilist_trailer(int(anime_id))
+    
+    if not result or 'error' in result:
+        try:
+            zoro_info = zoro.fetch_anime_info(anime_id)
+            zoro_dict = zoro_info.__dict__
+            zoro_dict['episodes'] = to_dict_list(zoro_info.episodes)
+            zoro_dict['recommendations'] = to_dict_list(zoro_info.recommendations)
 
-    if 'error' in result:
-        if "No media found" in result['error'] or "Trailer not found" in result['error']:
-            return jsonify(result), 404
-        else:
-            return jsonify(result), 500
+            anilist_id = zoro_dict.get('anilist_id')
+            if anilist_id:
+                result = get_anilist_trailer(int(anilist_id))
+            
+            if not result or 'error' in result:
+                return jsonify({
+                    'error': "Failed to fetch"
+                }), 500
+            else:
+                return jsonify(result)
+        except Exception as e:
+            return jsonify({
+                'error': "Failed to fetch"
+            }), 500
     
     return jsonify(result)
     
