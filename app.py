@@ -15,6 +15,8 @@ import pytz
 from Crypto.Cipher import AES
 from Crypto.Hash import MD5
 from Crypto.Util.Padding import unpad
+from tznn import tznn
+
 
 def evp_bytes_to_key(password: bytes, salt: bytes, key_len: int, iv_len: int):
     if MD5 is None: raise ImportError("pycryptodome is required for decryption.")
@@ -994,15 +996,21 @@ def format_timedelta(td):
 @app.route('/next_ep')
 def next_episode_info():
     anime_id = request.args.get('id', type=str)
-    tz_name = request.args.get('timezone', 'Europe/London')
+    tz_abbr = request.args.get('timezone', 'BST').upper()
     
     if not anime_id:
         abort(400, description="The anime 'id' is a required query parameter.")
 
+    tz = tznn()
+
     try:
-        user_tz = pytz.timezone(tz_name)
-    except pytz.UnknownTimeZoneError:
-        abort(400, description=f"Unknown timezone: {tz_name}")
+        iana_tz = tz.get_all_available_time_zones().get(tz_abbr)
+        if not iana_tz:
+            abort(400, description=f"Unknown timezone abbreviation: {tz_abbr}")
+        
+        user_tz = pytz.timezone(iana_tz)
+    except ValueError:
+        abort(400, description=f"Invalid timezone abbreviation: {tz_abbr}")
 
     utc_now = datetime.now(timezone.utc)
 
@@ -1037,7 +1045,7 @@ def next_episode_info():
                                 'episode': anime.other_data.get('airingEpisode'),
                                 'airingAtUTC': airing_datetime_utc.isoformat(),
                                 'airingAtLocal': airing_datetime_local.isoformat(),
-                                'localTimezone': tz_name,
+                                'localTimezone': airing_datetime_local.tzname(),
                                 'countdown': format_timedelta(time_remaining)
                             })
                     except ValueError:
