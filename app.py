@@ -16,7 +16,7 @@ from Crypto.Cipher import AES
 from Crypto.Hash import MD5
 from Crypto.Util.Padding import unpad
 from tznn import tznn
-
+from zoneinfo import ZoneInfo
 
 def evp_bytes_to_key(password: bytes, salt: bytes, key_len: int, iv_len: int):
     if MD5 is None: raise ImportError("pycryptodome is required for decryption.")
@@ -1001,14 +1001,71 @@ def next_episode_info():
     if not anime_id:
         abort(400, description="The anime 'id' is a required query parameter.")
 
-    tz = tznn()
+    if tz_abbr == 'UTC':
+        iana_tz = 'UTC'
+    elif tz_abbr == 'GMT':
+        iana_tz = 'Etc/GMT'
+    elif tz_abbr == 'BST':
+        iana_tz = 'Europe/London'
+    elif tz_abbr == 'IST':
+        iana_tz = 'Asia/Kolkata'
+    elif tz_abbr == 'EST':
+        iana_tz = 'America/New_York'
+    elif tz_abbr == 'EDT':
+        iana_tz = 'America/New_York'
+    elif tz_abbr == 'CST':
+        iana_tz = 'America/Chicago'
+    elif tz_abbr == 'CDT':
+        iana_tz = 'America/Chicago'
+    elif tz_abbr == 'MST':
+        iana_tz = 'America/Denver'
+    elif tz_abbr == 'MDT':
+        iana_tz = 'America/Denver'
+    elif tz_abbr == 'PST':
+        iana_tz = 'America/Los_Angeles'
+    elif tz_abbr == 'PDT':
+        iana_tz = 'America/Los_Angeles'
+    elif tz_abbr == 'AKST':
+        iana_tz = 'America/Anchorage'
+    elif tz_abbr == 'AKDT':
+        iana_tz = 'America/Anchorage'
+    elif tz_abbr == 'HST':
+        iana_tz = 'Pacific/Honolulu'
+    elif tz_abbr == 'AEST':
+        iana_tz = 'Australia/Sydney'
+    elif tz_abbr == 'AEDT':
+        iana_tz = 'Australia/Sydney'
+    elif tz_abbr == 'ACST':
+        iana_tz = 'Australia/Adelaide'
+    elif tz_abbr == 'ACDT':
+        iana_tz = 'Australia/Adelaide'
+    elif tz_abbr == 'AWST':
+        iana_tz = 'Australia/Perth'
+    elif tz_abbr == 'JST':
+        iana_tz = 'Asia/Tokyo'
+    elif tz_abbr == 'KST':
+        iana_tz = 'Asia/Seoul'
+    elif tz_abbr == 'CET':
+        iana_tz = 'Europe/Paris'
+    elif tz_abbr == 'CEST':
+        iana_tz = 'Europe/Paris'
+    elif tz_abbr == 'EET':
+        iana_tz = 'Europe/Athens'
+    elif tz_abbr == 'EEST':
+        iana_tz = 'Europe/Athens'
+    elif tz_abbr == 'WET':
+        iana_tz = 'Europe/Lisbon'
+    elif tz_abbr == 'WEST':
+        iana_tz = 'Europe/Lisbon'
+    elif tz_abbr == 'MSK':
+        iana_tz = 'Europe/Moscow'
+    elif tz_abbr == 'MSD':
+        iana_tz = 'Europe/Moscow'
+    else:
+        abort(400, description=f"Unknown timezone abbreviation: {tz_abbr}")
 
     try:
-        iana_tz = tz.get_all_available_time_zones().get(tz_abbr)
-        if not iana_tz:
-            abort(400, description=f"Unknown timezone abbreviation: {tz_abbr}")
-        
-        user_tz = pytz.timezone(iana_tz)
+        user_tz = ZoneInfo(iana_tz)
     except ValueError:
         abort(400, description=f"Invalid timezone abbreviation: {tz_abbr}")
 
