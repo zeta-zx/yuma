@@ -135,7 +135,7 @@ class Zoro:
 
     def __init__(self, custom_base_url:Optional[str]=None):
         self.name = 'HiAnime'
-        self.base_url = 'https://hianime.to'
+        self.base_url = 'https://aniwatchtv.to'
         self.logo = 'https://is3-ssl.mzstatic.com/image/thumb/Purple112/v4/7e/91/00/7e9100ee-2b62-0942-4cdc-e9b93252ce1c/source/512x512bb.jpg'
         self.session = requests.Session()
         self.session.headers.update({
@@ -341,7 +341,7 @@ class Zoro:
     @staticmethod
     async def get_client_key(embed_url: str) -> str:
         headers = {
-            "Referer": "https://hianime.to",
+            "Referer": "https://aniwatchtv.to",
             "User-Agent": "Mozilla/5.0"
         }
 
@@ -1194,4 +1194,4 @@ def trailer():
     return jsonify(result)
     
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=8192)
